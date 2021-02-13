@@ -46,4 +46,27 @@ optional arguments:
 4423606,23336100
 ```
 You could access an article by filling in the `{}` in `https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{}` with the values of the edgelist.
+
+# Visualize
+
+The resulting edgelists can be pretty easily visualized in R using the `igraph` package.
+
+![](images/k3.png)
+
+I used this code to make the plot above.
+
+```R
+library(igraph)
+graph <- graph_from_dataframe(as.data.frame(read.csv('edgelist.csv')))
+graph <- simplify(graph)
+layout <- layout_with_kk(graph)
+plot(g, edge.arrow.size=0.2, vertex.size=3, vertex.label = NA, 
+     vertex.color = adjustcolor("SkyBlue2", alpha.f = .5), 
+     layout=kk)
+```
+
+
+
+
+
                        
