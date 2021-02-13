@@ -1,6 +1,7 @@
 from pmcTree.api import get_cited_articles_from_pmc_id, parrell_citation_getter
 import pprint
 import pandas as pd
+import sys
 import csv
 
 pp = pprint.PrettyPrinter(width=41, compact=True)
@@ -13,8 +14,9 @@ def add_graph_layer(leaves, edge_dict, num_cpu=1):
     for each_id in leaves:
         if each_id not in edge_dict:
             cited_articles = get_cited_articles_from_pmc_id(each_id)
-            edge_dict[each_id] = cited_articles
-            new_nodes += cited_articles
+            if len(cited_articles) > 1:
+                edge_dict[each_id] = cited_articles
+                new_nodes += cited_articles
 
     return edge_dict, new_nodes
 
@@ -29,9 +31,12 @@ def test_graph_complete(leaves, edge_dict):
 
 def expand_graph_from_root(root_id, k=5, till_complete=False, backup_interval=1):
     edge_dict = {}
-    edge_dict[root_id] = get_cited_articles_from_pmc_id(root_id)
+    root_citations = get_cited_articles_from_pmc_id(root_id)
+    if len(root_citations) <= 1:
+        print(f'PMC{root_id} either is not a valid ID or does not cite any articles')
+        sys.exit()
     new_nodes = edge_dict[root_id]
-    i = 1
+    i = 0
     while True:
         if till_complete and not new_nodes:  # no nodes added
             break
