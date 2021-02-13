@@ -31,14 +31,15 @@ def test_graph_complete(leaves, edge_dict):
 
 def expand_graph_from_root(root_id, k=5, till_complete=False, backup_interval=1):
     edge_dict = {}
-    root_citations = get_cited_articles_from_pmc_id(root_id)
-    if len(root_citations) <= 1:
+    new_nodes = get_cited_articles_from_pmc_id(root_id)
+    if len(new_nodes) <= 1:
         print(f'PMC{root_id} either is not a valid ID or does not cite any articles')
         sys.exit()
-    new_nodes = edge_dict[root_id]
+    edge_dict[root_id] = new_nodes
     i = 0
     while True:
-        if till_complete and not new_nodes:  # no nodes added
+        if not new_nodes:
+            print('no nodes')
             break
         if not till_complete and i >= k:
             break

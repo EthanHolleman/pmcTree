@@ -9,8 +9,11 @@ pmc_id_regex = re.compile(r'<Id>(\d+)<\/Id>')
 
 def get_cited_articles_from_pmc_id(pmc_id):
     response = requests.get(ARTICLES_CITED_URL.format(pmc_id))
-    print(pmc_id, response.status_code)
-    return pmc_id_regex.findall(str(response.content, 'utf-8'))
+    print(f'Accessing PMC{pmc_id} response: {response.status_code}')
+    cites = set(pmc_id_regex.findall(str(response.content, 'utf-8')))
+    if pmc_id in cites:
+        cites.remove(pmc_id)
+    return cites
 
 
 def parrell_citation_getter(pmc_id_list, cpu_count=mp.Pool(mp.cpu_count())):
